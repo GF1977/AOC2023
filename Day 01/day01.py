@@ -1,26 +1,19 @@
-import os
-import sys
-import argparse
-
 def parse_file(file_to_process):
     file = open(file_to_process, mode="r")
     data: list[str] = file.read().split("\n")
-
     return data
-
 
 def get_digits(s):
     digits = "".join(filter(str.isdigit, s))
-    if digits.__len__() > 0:
-        res = digits[0] + digits[digits.__len__() - 1]
-    else:
-        res = None
+    if digits == "":
+        return 0
     
-    return int(res)
+    return int(digits[0] + digits[digits.__len__() - 1])
+        
 
 def main():
     
-    file_name = "Day 01\day01-prd.txt"
+    file_name = "Day 01\day01-dev.txt"
     file_data = parse_file(file_name)
 
     res_part_one = 0
