@@ -5,7 +5,7 @@ def parse_file(file_to_process):
     data: list[str] = file.read().split("\n")
     return data
 
-def super_new(s, part):
+def solve_the_puzzle(s, part):
     calibration_dict = {
     "1":    "1",
     "2":    "2",
@@ -68,8 +68,8 @@ def main():
     res_part_two = 0
 
     for line in file_data:
-        res_part_one += super_new(line, part="one") #calibration_values
-        res_part_two += super_new(line, part="two") #calibration_values
+        res_part_one += solve_the_puzzle(line, part="one") #calibration_values
+        res_part_two += solve_the_puzzle(line, part="two") #calibration_values
 
     print("----------------------------")
     print("Part One:", res_part_one)
