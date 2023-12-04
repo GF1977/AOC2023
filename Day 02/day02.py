@@ -4,9 +4,7 @@ def parse_file(file_to_process):
     return data
 
 def parse_data(data):
-    s = data.split(": ")[1];
-    # Split the string into games
-    games = s.split("; ")
+    games = data.split(": ")[1].split("; ")
 
     # Parse each game into a dictionary
     result = []
@@ -20,11 +18,7 @@ def parse_data(data):
     return result
 
 def is_game_possible(games):
-    game_set =  {
-        'red':  12,
-        'green':13,
-        'blue': 14
-    }
+    game_set =  {'red':  12, 'green':13, 'blue': 14}
 
     for game in games:
         if  ("red"   in game and game["red"]   > game_set["red"]  ) or \
@@ -46,14 +40,10 @@ def main():
     game_counter = 1
     for line in file_data:
         game = parse_data(line)
-        print(game_counter, game)
         if is_game_possible(game):
             res_part_one+=game_counter
         
         game_counter+=1
-
-
-
 
     print("----------------------------")
     print("Part One:", res_part_one)
@@ -61,3 +51,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+#Part One: 2447
+#Part Two: 0
