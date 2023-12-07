@@ -1,4 +1,5 @@
 import re
+import timeit
 
 def parse_file(file_to_process):
     file = open(file_to_process, mode="r")
@@ -7,7 +8,7 @@ def parse_file(file_to_process):
 
 def main():
     
-    file_name = "Day 01\day0X-prd.txt"
+    file_name = "Day 0X\day0X-prd.txt"
     file_data = parse_file(file_name)
 
     res_part_one = 0
@@ -19,7 +20,10 @@ def main():
     print("Part Two:", res_part_two)
 
 if __name__ == "__main__":
+    start_time = timeit.default_timer()
     main()
+    end_time = timeit.default_timer()
+    print("Elapsed time:", end_time - start_time)
 
 #Part One: 
 #Part Two: 
