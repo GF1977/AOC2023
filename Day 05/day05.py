@@ -1,6 +1,4 @@
 # --- Day 5: If You Give A Seed A Fertilizer ---
-
-import re
 import timeit
 
 class SeedMapping:
@@ -9,31 +7,26 @@ class SeedMapping:
         self.src_range_start = int(src_range_start)
         self.range_len = int(range_len)
 
-def get_intersection(obj_start, obj_range, X):
-
-    start = max(obj_start, X.src_range_start)
-    end = min(obj_start + obj_range, X.src_range_start + X.range_len) # -1 ) #maybe can remove 1
+def get_intersection(obj_start, obj_range, map):
+    start = max(obj_start, map.src_range_start)
+    end = min(obj_start + obj_range, map.src_range_start + map.range_len)
     if start > end:
         return None
     else:
-        return [start + (X.dst_range_start - X.src_range_start), end - start - 1]
+        return [start + (map.dst_range_start - map.src_range_start), end - start - 1]
 
-
-def getMapping(result, map_name, source):
+def get_mapping(result, map_name, source):
     global_map = []
     for S in source:
         maps = []
-        for X in result[map_name]:
-            intersection = get_intersection(S[0],S[1], X) 
+        for map in result[map_name]:
+            intersection = get_intersection(obj_start = S[0], obj_range = S[1], map = map) 
             if intersection is not None:
                 maps.append(intersection)
         if len(maps) == 0:
             maps.append(S)
         global_map += maps
     return global_map
-
-
-
 
 def getMapping_part_one(result, map_name, source):
     maps = []
@@ -56,61 +49,51 @@ def parse_file(file_to_process):
     data: list[str] = file.read().split("\n")
     return data
 
+def parse_data(file_data):
+    seeds = []
+    mapping_name = []
+    result = {}
+
+    name = None
+    for line in file_data:
+        if "seeds:" in line:
+            seeds = list(map(int, line.split(":")[1].split()))
+        elif line.strip() == '':
+            continue
+        elif ':' in line:
+            name, values = line.split(':')
+            result[name] = set()
+            mapping_name.append(name)
+        else:
+            data = list(map(int, line.split()))
+            result[name].add(SeedMapping(data[0], data[1], data[2]))
+            
+    return seeds, result, mapping_name
+
+
 def main():
     
     file_name = "Day 05\day05-prd.txt"
     file_data = parse_file(file_name)
-    seeds = {}
+    seeds, result, mapping_name = parse_data(file_data)
 
-    result = {}
-    for line in file_data:
-        if "seeds:" in line:
-            seeds = list(map(int, line.split(":")[1].split()))
-            continue
-        if line == '':
-            continue
-        if ':' in line:
-            name, values = line.split(':')
-            continue
-        data = line.split(' ')
-        X = SeedMapping(data[0], data[1], data[2])
-        if name not in  result:
-            result[name] ={X}
-        else:
-            result[name].add(X)
+    tmp_res_one = seeds
+    tmp_res_two = [[seeds[i], seeds[i+1]] for i in range(0, len(seeds), 2)]
+    for name in mapping_name:
+        tmp_res_one = getMapping_part_one(result, name, tmp_res_one)
+        tmp_res_two = get_mapping(result, name, tmp_res_two)
 
-    #print(result)
-    #for mp in result['water-to-light map']:
-    #    print(mp.dst_range_start, mp.src_range_start, mp.range_len)
 
     lowest_location = float('inf')
-
-    seeds_two = [[seeds[i], seeds[i+1]] for i in range(0, len(seeds), 2)]
-
-    #for S in seeds_two:
-    seed = seeds_two
-    soil_num = getMapping(result, 'seed-to-soil map', seed)
-    print(f'Seed: {seeds}  soil_num: {soil_num}')
-    fert_num = getMapping(result, 'soil-to-fertilizer map', soil_num)
-    print(f'Seed: {soil_num}  fert_num: {fert_num}')
-    water_num = getMapping(result, 'fertilizer-to-water map', fert_num)
-    print(f'Seed: {fert_num}  water_num: {water_num}')
-    light_num = getMapping(result, 'water-to-light map', water_num)
-    print(f'Seed: {water_num}  light_num: {light_num}')
-    temp_num = getMapping(result, 'light-to-temperature map', light_num)
-    print(f'Seed: {light_num}  temp_num: {temp_num}')
-    hum_num = getMapping(result, 'temperature-to-humidity map', temp_num)
-    print(f'Seed: {temp_num}  hum_num: {hum_num}')
-    loc_num = getMapping(result, 'humidity-to-location map', hum_num)
-    print(f'Seed: {hum_num}  loc_num: {loc_num}')
-    print(f'Seed: {seed}  loc_num: {loc_num}')
-    for l_n in loc_num:
+    for l_n in tmp_res_two:
         if l_n[0] < lowest_location:
             lowest_location = l_n[0]
 
-    res_part_one = lowest_location
-    res_part_two = 0
+    res_part_one = min(tmp_res_one)
+    res_part_two = lowest_location
 
+    if res_part_two != 56931769:
+        print(" Noooooooooooooooooooooooooooooooooooooo !")
 
     print("----------------------------")
     print("Part One:", res_part_one)
