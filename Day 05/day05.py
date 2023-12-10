@@ -9,30 +9,30 @@ class SeedMapping:
         self.src_range_start = int(src_range_start)
         self.range_len = int(range_len)
 
-def get_intersection(a, b, x, y, dst):
-    start_ab = min(a,b)
-    start_xy = min(x,y)
-    end_ab = max(a,b)
-    end_xy = max(x,y)
+def get_intersection(obj_start, obj_range, X):
 
-    start = max(start_ab, start_xy)
-    end = min(end_ab, end_xy)
+    start = max(obj_start, X.src_range_start)
+    end = min(obj_start + obj_range, X.src_range_start + X.range_len) # -1 ) #maybe can remove 1
     if start > end:
         return None
     else:
-        minmin = min(start_ab, start_xy)
-        return [start + dst - minmin , end - start]
+        return [start + (X.dst_range_start - X.src_range_start), end - start - 1]
+
 
 def getMapping(result, map_name, source):
-    maps = []
+    global_map = []
     for S in source:
-        res = -1
+        maps = []
         for X in result[map_name]:
-            intersection = get_intersection(S[0],S[0] + S[1], X.src_range_start, X.src_range_start + X.range_len - 1, X.dst_range_start) 
+            intersection = get_intersection(S[0],S[1], X) 
             if intersection is not None:
                 maps.append(intersection)
-    result = maps
-    return result
+        if len(maps) == 0:
+            maps.append(S)
+        global_map += maps
+    return global_map
+
+
 
 
 def getMapping_part_one(result, map_name, source):
@@ -58,7 +58,7 @@ def parse_file(file_to_process):
 
 def main():
     
-    file_name = "Day 05\day05-dev.txt"
+    file_name = "Day 05\day05-prd.txt"
     file_data = parse_file(file_name)
     seeds = {}
 
@@ -90,22 +90,23 @@ def main():
     #for S in seeds_two:
     seed = seeds_two
     soil_num = getMapping(result, 'seed-to-soil map', seed)
-    #print(f'Seed: {seeds}  soil_num: {soil_num}')
+    print(f'Seed: {seeds}  soil_num: {soil_num}')
     fert_num = getMapping(result, 'soil-to-fertilizer map', soil_num)
-    #print(f'Seed: {soil_num}  fert_num: {fert_num}')
+    print(f'Seed: {soil_num}  fert_num: {fert_num}')
     water_num = getMapping(result, 'fertilizer-to-water map', fert_num)
-    #print(f'Seed: {fert_num}  water_num: {water_num}')
+    print(f'Seed: {fert_num}  water_num: {water_num}')
     light_num = getMapping(result, 'water-to-light map', water_num)
-    #print(f'Seed: {water_num}  light_num: {light_num}')
+    print(f'Seed: {water_num}  light_num: {light_num}')
     temp_num = getMapping(result, 'light-to-temperature map', light_num)
-    #print(f'Seed: {light_num}  temp_num: {temp_num}')
+    print(f'Seed: {light_num}  temp_num: {temp_num}')
     hum_num = getMapping(result, 'temperature-to-humidity map', temp_num)
-    #print(f'Seed: {temp_num}  hum_num: {hum_num}')
+    print(f'Seed: {temp_num}  hum_num: {hum_num}')
     loc_num = getMapping(result, 'humidity-to-location map', hum_num)
-    #print(f'Seed: {temp_num}  loc_num: {loc_num}')
+    print(f'Seed: {hum_num}  loc_num: {loc_num}')
     print(f'Seed: {seed}  loc_num: {loc_num}')
-    if min(loc_num) < lowest_location:
-        lowest_location = min(loc_num)
+    for l_n in loc_num:
+        if l_n[0] < lowest_location:
+            lowest_location = l_n[0]
 
     res_part_one = lowest_location
     res_part_two = 0
@@ -121,5 +122,5 @@ if __name__ == "__main__":
     end_time = timeit.default_timer()
     print("Elapsed time:", end_time - start_time)
 
-#Part One: 
-#Part Two: 
+#Part One: 486613012
+#Part Two: 56931769
