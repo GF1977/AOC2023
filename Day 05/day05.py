@@ -15,34 +15,30 @@ def get_intersection(obj_start, obj_range, map):
     else:
         return [start + (map.dst_range_start - map.src_range_start), end - start - 1]
 
-def get_mapping(result, map_name, source):
+def get_mapping(result, map_name, source, puzzle_part = 1):
     global_map = []
     for S in source:
         maps = []
-        for map in result[map_name]:
-            intersection = get_intersection(obj_start = S[0], obj_range = S[1], map = map) 
-            if intersection is not None:
-                maps.append(intersection)
+        #---------------
+        if puzzle_part == 1:
+            res = -1
+            for X in result[map_name]:
+                if S >= X.src_range_start and S < X.src_range_start + X.range_len:
+                    res = X.dst_range_start + S - X.src_range_start
+                if res < 0:
+                    res = S    
+        #---------------
+        if puzzle_part == 2:
+            for map in result[map_name]:
+                intersection = get_intersection(obj_start = S[0], obj_range = S[1], map = map) 
+                if intersection is not None:
+                    maps.append(intersection)
+                res = S
+        #---------------
         if len(maps) == 0:
-            maps.append(S)
+            maps.append(res)
         global_map += maps
     return global_map
-
-def getMapping_part_one(result, map_name, source):
-    maps = []
-    for S in source:
-        res = -1
-        for X in result[map_name]:
-            if S >= X.src_range_start and S < X.src_range_start + X.range_len:
-                res = X.dst_range_start + S - X.src_range_start
-            if res < 0:
-                res = S
-            if res not in maps:
-                maps.append(res)
-    result = maps
-    if len(maps) > 1:
-        result = [m for m in maps if m not in source]
-    return result
 
 def parse_file(file_to_process):
     file = open(file_to_process, mode="r")
@@ -80,9 +76,8 @@ def main():
     tmp_res_one = seeds
     tmp_res_two = [[seeds[i], seeds[i+1]] for i in range(0, len(seeds), 2)]
     for name in mapping_name:
-        tmp_res_one = getMapping_part_one(result, name, tmp_res_one)
-        tmp_res_two = get_mapping(result, name, tmp_res_two)
-
+        tmp_res_one = get_mapping(result, name, tmp_res_one, puzzle_part=1)
+        tmp_res_two = get_mapping(result, name, tmp_res_two, puzzle_part=2)
 
     lowest_location = float('inf')
     for l_n in tmp_res_two:
@@ -91,9 +86,6 @@ def main():
 
     res_part_one = min(tmp_res_one)
     res_part_two = lowest_location
-
-    if res_part_two != 56931769:
-        print(" Noooooooooooooooooooooooooooooooooooooo !")
 
     print("----------------------------")
     print("Part One:", res_part_one)
