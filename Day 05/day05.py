@@ -33,7 +33,7 @@ def parse_file(file_to_process):
 
 def main():
     
-    file_name = "Day 05\day05-prd.txt"
+    file_name = "Day 05\day05-dev.txt"
     file_data = parse_file(file_name)
     seeds = {}
 
@@ -62,6 +62,7 @@ def main():
     #seeds = [14]
 
     lowest_location = float('inf')
+
     for S in seeds:
         seed = [S]
         soil_num = getMapping(result, 'seed-to-soil map', seed)
@@ -82,10 +83,7 @@ def main():
         if min(loc_num) < lowest_location:
             lowest_location = min(loc_num)
 
-        print(f"Lowest location: {lowest_location}")
-
-
-    res_part_one = 0
+    res_part_one = lowest_location
     res_part_two = 0
 
 
