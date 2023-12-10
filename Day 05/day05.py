@@ -9,8 +9,33 @@ class SeedMapping:
         self.src_range_start = int(src_range_start)
         self.range_len = int(range_len)
 
+def get_intersection(a, b, x, y, dst):
+    start_ab = min(a,b)
+    start_xy = min(x,y)
+    end_ab = max(a,b)
+    end_xy = max(x,y)
+
+    start = max(start_ab, start_xy)
+    end = min(end_ab, end_xy)
+    if start > end:
+        return None
+    else:
+        minmin = min(start_ab, start_xy)
+        return [start + dst - minmin , end - start]
 
 def getMapping(result, map_name, source):
+    maps = []
+    for S in source:
+        res = -1
+        for X in result[map_name]:
+            intersection = get_intersection(S[0],S[0] + S[1], X.src_range_start, X.src_range_start + X.range_len - 1, X.dst_range_start) 
+            if intersection is not None:
+                maps.append(intersection)
+    result = maps
+    return result
+
+
+def getMapping_part_one(result, map_name, source):
     maps = []
     for S in source:
         res = -1
@@ -58,30 +83,29 @@ def main():
     #for mp in result['water-to-light map']:
     #    print(mp.dst_range_start, mp.src_range_start, mp.range_len)
 
-    best_locations = []
-    #seeds = [14]
-
     lowest_location = float('inf')
 
-    for S in seeds:
-        seed = [S]
-        soil_num = getMapping(result, 'seed-to-soil map', seed)
-        #print(f'Seed: {seeds}  soil_num: {soil_num}')
-        fert_num = getMapping(result, 'soil-to-fertilizer map', soil_num)
-        #print(f'Seed: {soil_num}  fert_num: {fert_num}')
-        water_num = getMapping(result, 'fertilizer-to-water map', fert_num)
-        #print(f'Seed: {fert_num}  water_num: {water_num}')
-        light_num = getMapping(result, 'water-to-light map', water_num)
-        #print(f'Seed: {water_num}  light_num: {light_num}')
-        temp_num = getMapping(result, 'light-to-temperature map', light_num)
-        #print(f'Seed: {light_num}  temp_num: {temp_num}')
-        hum_num = getMapping(result, 'temperature-to-humidity map', temp_num)
-        #print(f'Seed: {temp_num}  hum_num: {hum_num}')
-        loc_num = getMapping(result, 'humidity-to-location map', hum_num)
-        #print(f'Seed: {temp_num}  loc_num: {loc_num}')
-        print(f'Seed: {seed}  loc_num: {loc_num}')
-        if min(loc_num) < lowest_location:
-            lowest_location = min(loc_num)
+    seeds_two = [[seeds[i], seeds[i+1]] for i in range(0, len(seeds), 2)]
+
+    #for S in seeds_two:
+    seed = seeds_two
+    soil_num = getMapping(result, 'seed-to-soil map', seed)
+    #print(f'Seed: {seeds}  soil_num: {soil_num}')
+    fert_num = getMapping(result, 'soil-to-fertilizer map', soil_num)
+    #print(f'Seed: {soil_num}  fert_num: {fert_num}')
+    water_num = getMapping(result, 'fertilizer-to-water map', fert_num)
+    #print(f'Seed: {fert_num}  water_num: {water_num}')
+    light_num = getMapping(result, 'water-to-light map', water_num)
+    #print(f'Seed: {water_num}  light_num: {light_num}')
+    temp_num = getMapping(result, 'light-to-temperature map', light_num)
+    #print(f'Seed: {light_num}  temp_num: {temp_num}')
+    hum_num = getMapping(result, 'temperature-to-humidity map', temp_num)
+    #print(f'Seed: {temp_num}  hum_num: {hum_num}')
+    loc_num = getMapping(result, 'humidity-to-location map', hum_num)
+    #print(f'Seed: {temp_num}  loc_num: {loc_num}')
+    print(f'Seed: {seed}  loc_num: {loc_num}')
+    if min(loc_num) < lowest_location:
+        lowest_location = min(loc_num)
 
     res_part_one = lowest_location
     res_part_two = 0
