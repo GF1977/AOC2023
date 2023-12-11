@@ -20,27 +20,28 @@ def get_winning_combination(time, dist):
     for i in range(0, time + 1):
         current_distance = i * (time - i)
         if current_distance > dist:
-            print (f'Time to hold button: {i} ms     Distance: {current_distance}')
+            #print (f'Time to hold button: {i} ms     Distance: {current_distance}')
             count_of_winning_combinations+=1
 
     return count_of_winning_combinations
 
 def main():
     
-    file_name = "Day 06\day06-prd.txt"
+    file_name = "Day 06\day06-dev.txt"
     race_list = parse_file(file_name)
 
     res_part_one = 1
     for race in race_list:
-        print(race)
         x = get_winning_combination(time = race[0], dist = race[1])
-        print(race, x)
         res_part_one *= x
 
+    file_name = "Day 06\day06-dev2.txt"
+    race_list = parse_file(file_name)
 
-
-    res_part_two = 0
-
+    res_part_two = 1
+    for race in race_list:
+        x = get_winning_combination(time = race[0], dist = race[1])
+        res_part_two *= x
 
     print("----------------------------")
     print("Part One:", res_part_one)
@@ -52,5 +53,5 @@ if __name__ == "__main__":
     end_time = timeit.default_timer()
     print("Elapsed time:", end_time - start_time)
 
-#Part One: 
-#Part Two: 
+#Part One: 1312850
+#Part Two: 36749103
