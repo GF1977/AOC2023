@@ -1,4 +1,4 @@
-import re
+import math
 import timeit
 
 def parse_file(file_to_process):
@@ -15,32 +15,68 @@ def parse_file(file_to_process):
 
     return result
 
+#brutforce
 def get_winning_combination(time, dist):
     count_of_winning_combinations = 0
     for i in range(0, time + 1):
         current_distance = i * (time - i)
         if current_distance > dist:
-            #print (f'Time to hold button: {i} ms     Distance: {current_distance}')
             count_of_winning_combinations+=1
 
     return count_of_winning_combinations
 
-def main():
+#  math: solving quadratic polynomial a*x*x + b*x + c = 0
+#  win_time * win_time + time * win_time - dist = 0
+def get_winning_combination2(time, dist):
+    cycles = 0
+
+    D = (time*time - 4*dist) #Discriminant
+    edge_a = int((-1*time - math.sqrt(D))/-2)
+    edge_b = int((-1*time + math.sqrt(D))/-2)
+ 
+    edge = min(edge_a, edge_b)
+
+    while edge*(time - edge) <= dist:
+        edge += 1
+        cycles+=1
+
+    while edge*(time - edge) > dist:
+        edge -= 1
+        cycles+=1
+
+    left_edge = edge
+
+    edge = time - left_edge
+    while edge*(time - edge) >= dist:
+        edge += 1
+        cycles+=1
     
-    file_name = "Day 06\day06-dev.txt"
+    while edge*(time - edge) < dist:
+        edge -= 1
+        cycles+=1
+
+    right_edge = edge
+
+    res = abs(right_edge - left_edge)
+
+    print("Cycles:", cycles)
+    return res
+
+def main():
+    file_name = "Day 06\day06-prd.txt"
     race_list = parse_file(file_name)
 
     res_part_one = 1
     for race in race_list:
-        x = get_winning_combination(time = race[0], dist = race[1])
+        x = get_winning_combination2(time = race[0], dist = race[1])
         res_part_one *= x
 
-    file_name = "Day 06\day06-dev2.txt"
+    file_name = "Day 06\day06-prd2.txt"
     race_list = parse_file(file_name)
 
     res_part_two = 1
     for race in race_list:
-        x = get_winning_combination(time = race[0], dist = race[1])
+        x = get_winning_combination2(time = race[0], dist = race[1])
         res_part_two *= x
 
     print("----------------------------")
