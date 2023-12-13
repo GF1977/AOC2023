@@ -15,51 +15,29 @@ def parse_file(file_to_process):
 
     return result
 
-#brutforce
-def get_winning_combination(time, dist):
-    count_of_winning_combinations = 0
-    for i in range(0, time + 1):
-        current_distance = i * (time - i)
-        if current_distance > dist:
-            count_of_winning_combinations+=1
+def find_the_edge(time, edge, dist, direction):
+    while edge*(time - edge) >= dist:
+        edge -= direction 
 
-    return count_of_winning_combinations
+    while edge*(time - edge) <= dist:
+        edge += direction 
+    
+    return edge
 
+def solve_quadratic_polinom(a,b,c):
+    D = b*b - 4 * a * c
+    x1 = (-b + math.sqrt(D)) / 2*a
+    x2 = (-b - math.sqrt(D)) / 2*a
+    return min(x1, x2) , max(x1, x2)
+  
 #  math: solving quadratic polynomial a*x*x + b*x + c = 0
 #  win_time * win_time + time * win_time - dist = 0
 def get_winning_combination2(time, dist):
-    cycles = 0
+    edge_candidate = int(min(solve_quadratic_polinom(-1, time, -dist)))
+    left_edge = find_the_edge(time, edge_candidate, dist, direction=1)
+    right_edge = find_the_edge(time, time - left_edge, dist, direction=-1)
+    res = abs(right_edge - left_edge + 1)
 
-    D = (time*time - 4*dist) #Discriminant
-    edge_a = int((-1*time - math.sqrt(D))/-2)
-    edge_b = int((-1*time + math.sqrt(D))/-2)
- 
-    edge = min(edge_a, edge_b)
-
-    while edge*(time - edge) <= dist:
-        edge += 1
-        cycles+=1
-
-    while edge*(time - edge) > dist:
-        edge -= 1
-        cycles+=1
-
-    left_edge = edge
-
-    edge = time - left_edge
-    while edge*(time - edge) >= dist:
-        edge += 1
-        cycles+=1
-    
-    while edge*(time - edge) < dist:
-        edge -= 1
-        cycles+=1
-
-    right_edge = edge
-
-    res = abs(right_edge - left_edge)
-
-    print("Cycles:", cycles)
     return res
 
 def main():
