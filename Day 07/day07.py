@@ -7,8 +7,20 @@ def parse_file(file_to_process):
     data: list[str] = file.read().split("\n")
     return data
 
+def convert_to_hand(hand_list):
+    res = ''
+    replacement = {'666':'A', '555':'K', '444':'Q', '333':'J', '222':'T', '109':'9', '108':'8', '107':'7', '106':'6', '105':'5', '104':'4', '103':'3', '102':'2'}
+    for x in hand_list:
+        card = str(x).rstrip('0')
+        if card in replacement:
+            card = replacement[card]
+            res+=(card)
+        else:
+            print('Stop')
+    return res
+
 def get_combination(input):
-    replacement = {'A':24, 'K':23, 'Q':22, 'J':21, 'T':20}
+    replacement = {'A':666, 'K':555, 'Q':444, 'J':333, 'T':222}
     counter = collections.Counter(input)
     res = []
 
@@ -16,42 +28,48 @@ def get_combination(input):
         if char in replacement:
             char = replacement[char]
         else:
-            char = '1'+char
-        res.append([int(char), count])
+            char = '10'+char
+        res.append([int(char)*10**(count), count])
 
     card_value_list = []
     for r in res:
         for count in range(0,r[1]):
-            card_value_list.append(r[0]*10**(r[1]-1))
+            #card_value_list.append(r[0]*(10**(r[1])))
+            card_value_list.append(r[0])
     card_value_list.sort(reverse=True)
+    nice_hand = convert_to_hand(card_value_list)
     card_value_str = ''
     for x in card_value_list:
          tmp = str(x)
          card_value_str+=tmp
     card_value = int(card_value_str)
+
+
     if len(res) == 5:
-        return ["High card", card_value]
+        return ["High card", card_value, nice_hand]
     if len(res) == 4:
-        return ["One pair", card_value*10**4]
+        return ["One pair", card_value, nice_hand]
     if len(res) == 3:
         for card in res:
             if card[1]==3:
-                return ["Three of a kind", card_value*10**12]
+                return ["Three of a kind", card_value, nice_hand]
             if card[1]==2:
-                return ["Two pair", card_value*10**8]
+                return ["Two pair", card_value, nice_hand]
     if len(res) == 2:
         for card in res:
             if card[1]==4:
-                return ["Four of a kind", card_value*10**18]
+                return ["Four of a kind", card_value, nice_hand]
             if card[1]==3:
-                return ["Full house", card_value*10**14]
+                return ["Full house", card_value, nice_hand]
     if len(res) == 1:
-        return ["Five of a kind", card_value*10**22]
+        return ["Five of a kind", card_value, nice_hand]
 
 def get_result(hands, combination, i):
     res = 0
     for hand in hands:
         if hand[2] == combination:
+            #if combination == 'Full house':
+            print(hand[3])
             res += hand[1]*i
             i+=1
     return res, i
@@ -68,7 +86,7 @@ def main():
         z = get_combination(x)
 
 
-        hands.append([z[1], y, z[0]])
+        hands.append([z[1], y, z[0], z[2]])
 
     hands.sort()
     #print(hands)
@@ -114,7 +132,9 @@ if __name__ == "__main__":
 
 #Part One: 
 
+# 248755486 - nope
 # 248806739 too high
 # 249019601 too high
-
+# 253201326
+# 253201326
 #Part Two: 
