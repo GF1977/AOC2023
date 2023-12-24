@@ -57,21 +57,21 @@ def get_combination(input):
     if len_res == 3:
         for card in res:
             if card[1] == 2:  # "Two pair"
-                return [3, card_value, nice_hand]
+                return [2, card_value, nice_hand]
 
             if card[1] == 3:  # "Three of a kind"
-                return [4, card_value, nice_hand]
+                return [3, card_value, nice_hand]
 
     if len_res == 2:
         for card in res:
             if card[1] == 3:  # "Full house"
-                return [5, card_value, nice_hand]
+                return [4, card_value, nice_hand]
 
             if card[1] == 4:  # Four of a kind"
-                return [6, card_value, nice_hand]
+                return [5, card_value, nice_hand]
 
     if len_res == 1:  # "Five of a kind"
-        return [7, card_value, nice_hand]
+        return [6, card_value, nice_hand]
 
 
 def get_result(hands, combination, i):
@@ -131,7 +131,7 @@ def main():
                 tpm_res = cnt * hands_with_values[hand]
                 res_part_one += tpm_res
                 cnt += 1
-        print(tpm_res)
+        print(i, tpm_res)
 
     res_part_two = 0
 
