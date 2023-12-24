@@ -43,7 +43,8 @@ def get_combination(input):
     for char, count in counter.items():
         res.append([char, count])
 
-    nice_hand = new_sorting(convert_to_hand(input))
+    #nice_hand = new_sorting(convert_to_hand(input))
+    nice_hand = convert_to_hand(input)
 
     card_value = 0
     len_res = len(res)
@@ -127,10 +128,12 @@ def main():
             x = hands[i]
             x.sort(reverse=True)
             for hand in x:
-                #print(i, hand, hands_with_values[hand])
-                tpm_res = cnt * hands_with_values[hand]
-                res_part_one += tpm_res
+                print(i, hand, hands_with_values[hand])
+                tpm_res += cnt * hands_with_values[hand]
+                
                 cnt += 1
+        
+        res_part_one += tpm_res
         print(i, tpm_res)
 
     res_part_two = 0
@@ -146,12 +149,7 @@ if __name__ == "__main__":
     end_time = timeit.default_timer()
     print("Elapsed time:", end_time - start_time)
 
-# Part One:
+# Part One: 248179786
 
-# 248469601 - nope
-# 248755486 - nope
-# 248806739 too high
-# 249019601 too high
-# 253201326
-# 253201326
-# Part Two:
+
+# Part Two:248469601 - nope
