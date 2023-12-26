@@ -1,6 +1,5 @@
 import timeit
 import collections
-from collections import Counter
 
 
 def parse_file(file_to_process):
@@ -31,8 +30,6 @@ def convert_to_hand(hand_list):
         if card in replacement:
             card = replacement[card]
             res += card
-        else:
-            print("Stop")
     return res
 
 
@@ -43,7 +40,6 @@ def get_combination(input):
     for char, count in counter.items():
         res.append([char, count])
 
-    #nice_hand = new_sorting(convert_to_hand(input))
     nice_hand = convert_to_hand(input)
 
     card_value = 0
@@ -84,22 +80,52 @@ def get_result(hands, combination, i):
     return res, i
 
 
-def new_sorting(hand):
-    # Count the frequency of each character
-    freq = Counter(hand)
+def get_combination2(input):
+    replacement = {
+        "A": 22,
+        "K": 21,
+        "Q": 20,
+        "J": 19,
+        "T": 18,
+        "9": 17,
+        "8": 16,
+        "7": 15,
+        "6": 14,
+        "5": 13,
+        "4": 12,
+        "3": 11,
+        "2": 10,
+    }
+    
 
-    # Sort the characters first by frequency (desc), then by character (asc)
-    sorted_chars = sorted(freq.items(), key=lambda x: (-x[1], x[0]))
+    counter = collections.Counter(input)
+    res = []
+    for char, count in counter.items():
+        res.append(count)
 
-    # Join the characters back into a string
-    sorted_string = "".join([char * count for char, count in sorted_chars])
+    for i in range(len(res), 5):
+        res.append(0)
 
-    return sorted_string
+    res.sort(reverse=True)
+
+    for i in range(0, 5):
+        card_score = replacement[input[i]]
+        res.append(card_score)
+
+
+    my_res = 0
+    for n in res:
+        my_res = my_res * 100 + int(n)
+
+    return my_res
 
 
 def main():
     hands = {}
     hands_with_values = {}
+    qqq = []
+
+    my_dict = {}
 
     file_name = "Day 07\\day07-prd.txt"
     file_data = parse_file(file_name)
@@ -107,6 +133,11 @@ def main():
         x = f.split(" ")[0]
         hand_value = int(f.split(" ")[1])
         z = get_combination(x)
+        zzz = get_combination2(x)
+        if zzz not in my_dict:
+            my_dict[zzz] = hand_value
+
+        qqq.append(zzz)
         key = z[0]
         nice_hand = z[2]
 
@@ -118,23 +149,27 @@ def main():
         if nice_hand not in hands_with_values:
             hands_with_values[nice_hand] = hand_value
 
+    qqq.sort(reverse=False)
     res_part_one = 0
 
+    i = 1
+    for x in qqq:
+        res_part_one+=my_dict[x] * i
+        i += 1
+
+
+    print(res_part_one)
+    res_part_one = 0
     print("----------")
     cnt = 1
     for i in range(0, 7):
-        tpm_res = 0 
         if i in hands:
             x = hands[i]
             x.sort(reverse=True)
             for hand in x:
-                print(i, hand, hands_with_values[hand])
-                tpm_res += cnt * hands_with_values[hand]
-                
+                res_part_one += cnt * hands_with_values[hand]
+
                 cnt += 1
-        
-        res_part_one += tpm_res
-        print(i, tpm_res)
 
     res_part_two = 0
 

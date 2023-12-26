@@ -25,7 +25,7 @@ def hand(h, part1):
 
 
 for part1 in (True, False):
-    h = sorted((hand(h, part1), int(b)) for h, b in (l.split() for l in lines))
+    h = sorted((hand(h, part1), int(b)) for h, b in (line.split() for line in lines))
     t = 0
     abc = h[0][0][0]
     tmp = 0
