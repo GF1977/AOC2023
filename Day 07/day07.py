@@ -8,26 +8,49 @@ def parse_file(file_to_process: str) -> list[str]:
     return data
 
 
-def get_hand_rank(hand: str) -> int:
+def get_hand_rank(hand: str, puzzle_part: int) -> int:
     card_ranks = {
-        "A": 22,
-        "K": 21,
-        "Q": 20,
-        "J": 19,
-        "T": 18,
-        "9": 17,
-        "8": 16,
-        "7": 15,
-        "6": 14,
-        "5": 13,
-        "4": 12,
-        "3": 11,
-        "2": 10,
+        "A": 24,
+        "K": 23,
+        "Q": 22,
+        "J": 21,
+        "T": 20,
+        "9": 19,
+        "8": 18,
+        "7": 17,
+        "6": 16,
+        "5": 15,
+        "4": 14,
+        "3": 13,
+        "2": 12,
+        "P": 10,
     }
+
+    if puzzle_part == 2:
+        card_ranks["J"] = 10
+
+    # ranks_template = [
+    #     [1, 1, 1, 1, 1],
+    #     [2, 1, 1, 1, 0],
+    #     [2, 2, 1, 0, 0],
+    #     [3, 1, 1, 0, 0],
+    #     [3, 2, 0, 0, 0],
+    #     [4, 1, 0, 0, 0],
+    #     [5, 0, 0, 0, 0]
+    # ]
 
     counter = collections.Counter(hand)
     rank = sorted([count for _, count in counter.items()], reverse=True)
     rank += [0] * (5 - len(rank))
+    if puzzle_part == 2:
+        card_ranks["J"] = 10
+        joker_cnt = counter["J"]
+        counter["J"] = 0
+        rank = sorted([count for _, count in counter.items()], reverse=True)
+        rank += [0] * (5 - len(rank))
+        rank[0] = (rank[0] + joker_cnt) % 6
+        # next_index_rank = (ranks_template.index(rank) + 1) % 6
+        # rank = ranks_template[next_index_rank]
     rank += [card_ranks[card] for card in hand[:5]]
 
     return sum(n * 100**i for i, n in enumerate(rank[::-1]))
@@ -42,7 +65,7 @@ def main():
 
     for line in file_data:
         hand, hand_value = line.split(" ")
-        key = get_hand_rank(hand)
+        key = get_hand_rank(hand, 2)
         hands_and_values[key] = int(hand_value)
 
     sorted_hands = sorted(hands_and_values.keys())
@@ -61,4 +84,4 @@ if __name__ == "__main__":
     print("Elapsed time:", end_time - start_time)
 
 # Part One: 248179786
-# Part Two:248469601 - nope
+# Part Two:248856995 - too high
