@@ -22,8 +22,7 @@ def get_hand_rank(hand: str, puzzle_part: int) -> int:
         "5": 15,
         "4": 14,
         "3": 13,
-        "2": 12,
-        "P": 10,
+        "2": 12
     }
 
     if puzzle_part == 2:
@@ -42,7 +41,7 @@ def get_hand_rank(hand: str, puzzle_part: int) -> int:
     counter = collections.Counter(hand)
     rank = sorted([count for _, count in counter.items()], reverse=True)
     rank += [0] * (5 - len(rank))
-    if puzzle_part == 2:
+    if puzzle_part == 2 and "J" in counter:
         card_ranks["J"] = 10
         joker_cnt = counter["J"]
         counter["J"] = 0
@@ -52,6 +51,8 @@ def get_hand_rank(hand: str, puzzle_part: int) -> int:
         # next_index_rank = (ranks_template.index(rank) + 1) % 6
         # rank = ranks_template[next_index_rank]
     rank += [card_ranks[card] for card in hand[:5]]
+    #if puzzle_part == 2 and joker_cnt > 0:
+    print(hand, rank)
 
     return sum(n * 100**i for i, n in enumerate(rank[::-1]))
 
@@ -65,7 +66,7 @@ def main():
 
     for line in file_data:
         hand, hand_value = line.split(" ")
-        key = get_hand_rank(hand, 2)
+        key = get_hand_rank(hand, 1)
         hands_and_values[key] = int(hand_value)
 
     sorted_hands = sorted(hands_and_values.keys())
@@ -73,8 +74,27 @@ def main():
         hands_and_values[key] * i for i, key in enumerate(sorted_hands, 1)
     )
 
+    sorted_hands = []
+    hands_and_values = {}
+
+    for line in file_data:
+        hand, hand_value = line.split(" ")
+        key = get_hand_rank(hand, 2)
+        hands_and_values[key] = int(hand_value)
+
+
+    for h in hands_and_values:
+        print(h)
+    sorted_hands = sorted(hands_and_values.keys())
+    res_part_two = sum(
+        hands_and_values[key] * i for i, key in enumerate(sorted_hands, 1)
+    )
+
+
+
     print("----------------------------")
     print("Part One:", res_part_one)
+    print("Part One:", res_part_two)
 
 
 if __name__ == "__main__":
@@ -85,3 +105,7 @@ if __name__ == "__main__":
 
 # Part One: 248179786
 # Part Two:248856995 - too high
+248856995
+247885995
+#Part 1 : 248179786
+#Part 2 : 247885995

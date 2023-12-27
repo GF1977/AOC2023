@@ -32,9 +32,9 @@ for part1 in (True, False):
     for i, (_, b) in enumerate(h):
         t += i * b + b
         if _[0] != abc:
-            print(f"Stage {_[0]} = {tmp}")
+            #print(f"Stage {_[0]} = {tmp}")
             tmp = 0
             abc = _[0]
         tmp += i * b + b
-        print(h[i])
+        #print(h[i])
     print("Part", 2 - part1, ":", t)
