@@ -41,38 +41,20 @@ def get_hand_rank(hand: str, puzzle_part: int) -> int:
 
 
 def main():
-    sorted_hands = []
-    hands_and_values = {}
-
     file_name = "Day 07\\day07-prd.txt"
     file_data = parse_file(file_name)
 
-    for line in file_data:
-        hand, hand_value = line.split(" ")
-        key = get_hand_rank(hand, 1)
-        hands_and_values[key] = int(hand_value)
+    for puzzle_n in range(1, 3):
+        sorted_hands = []
+        hands_and_values = {}
+        for line in file_data:
+            hand, hand_value = line.split(" ")
+            key = get_hand_rank(hand, puzzle_n)
+            hands_and_values[key] = int(hand_value)
 
-    sorted_hands = sorted(hands_and_values.keys())
-    res_part_one = sum(
-        hands_and_values[key] * i for i, key in enumerate(sorted_hands, 1)
-    )
-
-    sorted_hands = []
-    hands_and_values = {}
-
-    for line in file_data:
-        hand, hand_value = line.split(" ")
-        key = get_hand_rank(hand, 2)
-        hands_and_values[key] = int(hand_value)
-
-    sorted_hands = sorted(hands_and_values.keys())
-    res_part_two = sum(
-        hands_and_values[key] * i for i, key in enumerate(sorted_hands, 1)
-    )
-
-    print("----------------------------")
-    print("Part One:", res_part_one)
-    print("Part One:", res_part_two)
+        sorted_hands = sorted(hands_and_values.keys())
+        answer = sum(hands_and_values[key] * i for i, key in enumerate(sorted_hands, 1))
+        print(f"Part {puzzle_n}: {answer}")
 
 
 if __name__ == "__main__":
