@@ -2,14 +2,14 @@ import timeit
 import collections
 
 
-def parse_file(file_to_process):
-    file = open(file_to_process, mode="r")
-    data: list[str] = file.read().split("\n")
+def parse_file(file_to_process: str) -> list[str]:
+    with open(file_to_process, mode="r") as file:
+        data = file.read().split("\n")
     return data
 
 
-def get_combination2(input):
-    replacement = {
+def get_hand_rank(hand: str) -> int:
+    card_ranks = {
         "A": 22,
         "K": 21,
         "Q": 20,
@@ -25,59 +25,33 @@ def get_combination2(input):
         "2": 10,
     }
 
-    counter = collections.Counter(input)
-    res = []
-    for char, count in counter.items():
-        res.append(count)
+    counter = collections.Counter(hand)
+    rank = sorted([count for _, count in counter.items()], reverse=True)
+    rank += [0] * (5 - len(rank))
+    rank += [card_ranks[card] for card in hand[:5]]
 
-    for i in range(len(res), 5):
-        res.append(0)
-
-    res.sort(reverse=True)
-
-    for i in range(0, 5):
-        card_score = replacement[input[i]]
-        res.append(card_score)
-
-    my_res = 0
-    for n in res:
-        my_res = my_res * 100 + int(n)
-
-    return my_res
+    return sum(n * 100**i for i, n in enumerate(rank[::-1]))
 
 
 def main():
-    qqq = []
-    my_dict = {}
+    sorted_hands = []
+    hands_and_values = {}
 
     file_name = "Day 07\\day07-prd.txt"
     file_data = parse_file(file_name)
-    for f in file_data:
-        x = f.split(" ")[0]
-        hand_value = int(f.split(" ")[1])
 
-        zzz = get_combination2(x)
-        if zzz not in my_dict:
-            my_dict[zzz] = hand_value
+    for line in file_data:
+        hand, hand_value = line.split(" ")
+        key = get_hand_rank(hand)
+        hands_and_values[key] = int(hand_value)
 
-        qqq.append(zzz)
-
-    qqq.sort(reverse=False)
-    res_part_one = 0
-
-    i = 1
-    for x in qqq:
-        res_part_one += my_dict[x] * i
-        i += 1
-
-    print(res_part_one)
-    print("----------")
-
-    res_part_two = 0
+    sorted_hands = sorted(hands_and_values.keys())
+    res_part_one = sum(
+        hands_and_values[key] * i for i, key in enumerate(sorted_hands, 1)
+    )
 
     print("----------------------------")
     print("Part One:", res_part_one)
-    print("Part Two:", res_part_two)
 
 
 if __name__ == "__main__":
@@ -87,6 +61,4 @@ if __name__ == "__main__":
     print("Elapsed time:", end_time - start_time)
 
 # Part One: 248179786
-
-
 # Part Two:248469601 - nope
