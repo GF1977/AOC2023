@@ -22,6 +22,7 @@ def main():
     file_data = parse_file(file_name)
 
     nodes = {}
+    start_nodes = []
     lr_instruction = ""
     for n, line in enumerate(file_data):
         if n == 0:
@@ -31,24 +32,47 @@ def main():
             continue
         name, left_node, right_node = parse_map_node(line)
         nodes[name] = [left_node, right_node]
+        if name[-1] == "A":
+            start_nodes.append(name)
+
+    # i = 0
+    # current_node = "AAA"
+    len_inst = len(lr_instruction)
+    # while current_node != "ZZZ":
+    #     # print(current_node)
+    #     if lr_instruction[i % len_inst] == "L":
+    #         current_node = nodes[current_node][0]
+    #     else:
+    #         current_node = nodes[current_node][1]
+
+    #     i += 1
+
+    # res_part_one = i
 
     i = 0
-    current_node = 'AAA'
-    len_inst = len(lr_instruction)
-    while current_node != 'ZZZ':
-        #print(current_node)
-        if lr_instruction[i % len_inst] == 'L':
-            current_node = nodes[current_node][0]
-        else:
-            current_node = nodes[current_node][1]
+    current_nodes = start_nodes
+    end_of_cycle = False
+    while not end_of_cycle:
+        #print(current_nodes, lr_instruction[i % len_inst])
 
-        i += 1
+        tmp_nodes = []
+        for current_node in current_nodes:
+            if lr_instruction[i % len_inst] == "L":
+                tmp_nodes.append(nodes[current_node][0])
+            else:
+                tmp_nodes.append(nodes[current_node][1])
+        current_nodes = tmp_nodes
 
-    res_part_one = i
-    res_part_two = 0
+        end_of_cycle = True
+        for node in current_nodes:
+            if node[-1] != "Z":
+                end_of_cycle = False
+                break
+        i+=1
+    res_part_two = i
 
     print("----------------------------")
-    print("Part One:", res_part_one)
+    print("Part One:", 0)
     print("Part Two:", res_part_two)
 
 
@@ -58,5 +82,5 @@ if __name__ == "__main__":
     end_time = timeit.default_timer()
     print("Elapsed time:", end_time - start_time)
 
-# Part One:
+# Part One: 19637
 # Part Two:
