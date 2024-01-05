@@ -8,45 +8,36 @@ def parse_file(file_to_process: str) -> list[str]:
     return data
 
 
-def get_coeff(n):
-    row = [1]
+def get_coefficients(n: int) -> list[int]:
+    coefficients = [1]
     for i in range(n):
-        row.append(-(1 ** (i + 1)) * row[i] * (n - i) // (i + 1))
-    row[-1] = abs(row[-1])
-    return row
+        coefficients.append(-(1 ** (i + 1)) * coefficients[i] * (n - i) // (i + 1))
+    coefficients[-1] = abs(coefficients[-1])
+    return coefficients
 
 
-def get_solutioin(input, part):
-    res = 0
-    for value in input:
-        coef = get_coeff(len(value))
+def calculate_solution(input_data: list[int], part: int) -> int:
+    result = 0
+    for value in input_data:
+        coefficients = get_coefficients(len(value))
         if part == 2:
             if len(value) % 2 == 1:
-                coef = get_coeff(len(value) + (-1))
+                coefficients = get_coefficients(len(value) + (-1))
                 value.pop(-1)
-            coef.pop(0)
+            coefficients.pop(0)
 
-        x = 0
-        i = 0
-        for v in value:
-            x += v * coef[i]
-            i += 1
-        res += x
+        x = sum(v * coef for v, coef in zip(value, coefficients))
+        result += x
 
-    return abs(res)
+    return abs(result)
 
 
 def main():
     file_name = "Day 09\\day09-prd.txt"
-    file_data = parse_file(file_name)
+    input_data = [list(map(int, line.split())) for line in parse_file(file_name)]
 
-    input = []
-    for line in file_data:
-        values = [int(n) for n in line.split(" ")]
-        input.append(values)
-
-    print("Part One:", get_solutioin(input, part=1))
-    print("Part Two:", get_solutioin(input, part=2))
+    print("Part One:", calculate_solution(input_data, part=1))
+    print("Part Two:", calculate_solution(input_data, part=2))
 
 
 if __name__ == "__main__":
@@ -56,4 +47,4 @@ if __name__ == "__main__":
     print("Elapsed time:", end_time - start_time)
 
 # Part One: 1882395907
-# Part Two: 1988629085 too high
+# Part Two: 1005
