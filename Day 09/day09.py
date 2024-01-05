@@ -8,78 +8,56 @@ def parse_file(file_to_process: str) -> list[str]:
     return data
 
 
-def get_coeff(seq_len: int) -> list[int]:
+def get_coeff_old(seq_len: int) -> list[int]:
     if seq_len == 1:
         return [1]
     else:
         prev = get_coeff(seq_len - 1)
         return (
-            [prev[0] + 0]
+            [prev[0]]
             + [
                 (-1) ** (i) * (abs(prev[i - 1]) + abs(prev[i]))
                 for i in range(1, len(prev))
             ]
             + [0 + abs(prev[-1])]
         )
+    
+def get_coeff(n):
+    row = [1]
+    for i in range(n):
+        row.append(-1 ** (i+1) * row[i] * (n-i) // (i+1))
+    row[-1]=abs(row[-1])
+    return row
 
-
-def get_diff(values):
-    layers = []
-    layers.append(values)
-
-    n = 1
-    while True:
-        layers.append([])
-        for i in range(0, len(values) - 1):
-            layers[n].append(values[i + 1] - values[i])
-
-        if sum(layers[n]) == 0:
-            break
-        values = layers[n]
-        n += 1
-
-    diff = 0
-    for i in range(len(layers) - 1, -1, -1):
-        diff += int(layers[i][-1])
-
-    print(diff)
-    return diff
-
-
-def solve_part_one(input):
+def get_solutioin(input, part):
     res = 0
-    res1 = 0
-    for line in input:
-        res += get_diff(line)
+    for value in input:
+        #coef = get_coeff_old(len(value) + (2 - part))
+        coef = get_coeff(len(value))
+        if part == 2:
+           #value.pop(-1)
+           coef.pop(0)
+        x = 0
+        i = 0
+        for v in value:
+            x += v * coef[i]
+            i += 1
+        res += x
 
-    # if res != res1:
-    #     print('STOP', res, res1)
-    #     pass
-
-    return res
+    return abs(res)
 
 
 def main():
     file_name = "Day 09\\day09-dev.txt"
     file_data = parse_file(file_name)
 
-
-    # for i in range(1, 10):
-    #     print(get_coeff(i))
-
-    # return
-
     input = []
     for line in file_data:
         values = [int(n) for n in line.split(" ")]
         input.append(values)
 
-    res_part_one = solve_part_one(input)
-    res_part_two = 0
-
-    print("----------------------------")
-    print("Part One:", res_part_one)
-    print("Part Two:", res_part_two)
+    print("Part One:", get_solutioin(input, part=1))
+    print("Part Two:", get_solutioin(input, part=2))
 
 
 if __name__ == "__main__":
@@ -88,5 +66,5 @@ if __name__ == "__main__":
     end_time = timeit.default_timer()
     print("Elapsed time:", end_time - start_time)
 
-# Part One: 1882395934 too high
-# Part Two:
+# Part One: 1882395907
+# Part Two: 1988629085 too high
